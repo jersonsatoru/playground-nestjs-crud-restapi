@@ -1,0 +1,27 @@
+version: '3'
+services:
+  imersao-esquenta-fullcycle-3-api-app:
+    build: .
+    entrypoint: dockerize -wait tcp://db:5432 -timeout 40s ./.docker/entrypoint.sh
+    container_name: imersao-esquenta-fullcycle-3-api-app
+    ports:
+      - 5001:5001
+    volumes:
+      - .:/home/node/app
+    networks:
+      - imersao-esquenta-fullcycle-3-network
+  db:
+    build: .docker/postgres
+    container_name: imersao-esquenta-fullcycle-3-api-db
+    restart: always
+    tty: true
+    environment:
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=store
+    volumes:
+      - .docker/dbdata:/var/lib/postgresql/data
+    networks:
+      - imersao-esquenta-fullcycle-3-network
+networks:
+  imersao-esquenta-fullcycle-3-network:
+    driver: bridge
